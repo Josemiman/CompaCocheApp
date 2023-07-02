@@ -21,6 +21,66 @@ class LoginDialog(QDialog):
         self.password_input = QLineEdit(self)
         self.password_input.setEchoMode(QLineEdit.Password)
 
+        self.accept_button = QPushButton('Iniciar Sesión', self)
+        self.alta_button = QPushButton('Alta usuario', self)
+        self.cancel_button = QPushButton('Cancelar', self)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.user_label)
+        vbox.addWidget(self.user_input)
+        vbox.addWidget(self.password_label)
+        vbox.addWidget(self.password_input)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.accept_button)
+        hbox.addWidget(self.alta_button)
+        hbox.addWidget(self.cancel_button)
+
+        vbox.addLayout(hbox)
+
+        self.setLayout(vbox)
+
+        self.accept_button.clicked.connect(self.accept)
+        self.alta_button.clicked.connect(self.show_alta_usuario_dialog)
+        self.cancel_button.clicked.connect(self.reject)
+
+    def get_user_password(self):
+        user = self.user_input.text()
+        password = self.password_input.text()
+
+        # Verificar si el usuario y la contraseña corresponden a un usuario existente
+        if verificar_usuario_db(user, password):
+            return user, password
+        # Verificar si el usuario y la contraseña corresponden a un nuevo usuario
+        elif verificar_nuevo_usuario(user, password):
+            agregar_usuario_db(user, password)
+            return user, password
+        # Si no se encuentra el usuario o la contraseña, devolver None
+        else:
+            return None, None
+
+    def show_alta_usuario_dialog(self):
+        dialog = AltaUsuarioDialog(self)
+        if dialog.exec_() == QDialog.Accepted:
+            user, password = dialog.get_user_password()
+            if user and password:
+                self.user_input.setText(user)
+                self.password_input.setText(password)
+
+class AltaUsuarioDialog(QDialog):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle('Alta de usuario')
+        self.setGeometry(100, 100, 300, 150)
+
+        self.user_label = QLabel('Usuario:', self)
+        self.user_input = QLineEdit(self)
+
+        self.password_label = QLabel('Contraseña:', self)
+        self.password_input = QLineEdit(self)
+        self.password_input.setEchoMode(QLineEdit.Password)
+
         self.accept_button = QPushButton('Aceptar', self)
         self.cancel_button = QPushButton('Cancelar', self)
 
@@ -45,8 +105,6 @@ class LoginDialog(QDialog):
         user = self.user_input.text()
         password = self.password_input.text()
         return user, password
-
-
 
 class App(QWidget):
 
