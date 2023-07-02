@@ -3,23 +3,13 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 
-#¡Hola Jose! Claro, puedo ayudarte con eso. Aquí te dejo una función que te permitirá añadir datos a tu base de datos de Firestore:
-
-#```
-
-
-#```
+#¡Ho
 #datos = {
 #    "Zonas": "Puerto de la Torre1"
 #}
 
 #agregar_datos_db("CompaCoche", datos)
 #```
-
-#Espero que te sea útil. Si tienes alguna duda o necesitas ayuda adicional, no dudes en preguntarme
-
-
-#Claro, para modificar datos en Firebase puedes utilizar la siguiente función:
 
 def modificar_dato_db(id, campo, valor):
     # Configura las credenciales de Firebase
@@ -61,7 +51,7 @@ def cargar_lista_db(documento, campo):
     elementos = doc[campo]
 
     # Agrega los elementos a la lista de retorno
-    retorno = ['']
+    retorno = []
     for i in elementos:
         retorno.append(i)
 
@@ -73,14 +63,9 @@ def cargar_lista_db(documento, campo):
 
     return retorno
     
-#cargar_lista_db('FormData','Horario')
-
-
-#¡Hola de nuevo, Jose! Si deseas añadir un elemento a un campo de tipo array en un documento existente, puedes utilizar el método `array_union()` de Firestore.
 
 #Aquí tienes una función modificada que te permitirá añadir un elemento a un campo de tipo array:
 
-#```python
 def agregar_elemento_array(coleccion, id_documento, campo, elemento):
     # Configura las credenciales de Firebase
     cred = credentials.Certificate('AccessKey.json')
@@ -106,4 +91,13 @@ def agregar_elemento_array(coleccion, id_documento, campo, elemento):
 
 #Espero que esto te sea útil. ¡Si tienes alguna otra pregunta, estaré encantado de ayudarte! 😊👍
 
-#agregar_elemento_array('CompaCoche', 'FormData', 'Zonas','Casabermeja')
+#agregar_elemento_array('CompaCoche', 'FormData', 'Zonas','Mordor Norte')
+
+
+def verificar_usuario_db(user, password):
+    contra = cargar_lista_db('Usuarios', user)
+    print(contra)
+    if contra[0] == password:
+        return True
+    else:
+        return False

@@ -1,6 +1,7 @@
 import AccionesDB
 from AccionesDB import modificar_dato_db
 from AccionesDB import cargar_lista_db
+from AccionesDB import verificar_usuario_db
 from AccionesDB import agregar_elemento_array
 
 from PyQt5.QtGui import QPalette, QColor
@@ -185,7 +186,6 @@ class App(QWidget):
 
         self.setLayout(vbox)
 
-        #coche_combobox.currentTextChanged.connect(lambda text: plazas_input.setEnabled(text == 'Sí'))
         # Conectar la señal currentTextChanged de coche_combobox
         coche_combobox.currentTextChanged.connect(
             lambda text: self.update_elements(text, plazas_input, parking_combobox))
@@ -215,6 +215,9 @@ class App(QWidget):
         enabled = text == 'Sí'
         plazas_input.setEnabled(enabled)
         parking_combobox.setEnabled(enabled)
+        if enabled == False:
+            plazas_input.setText('')
+            parking_combobox.setCurrentIndex(-1)
 
     def add_or_modify(self, data):
         if all(data.values()):
@@ -235,7 +238,7 @@ if __name__ == '__main__':
     login_dialog = LoginDialog()
     if login_dialog.exec_() == QDialog.Accepted:
         user, password = login_dialog.get_user_password()
-        if user == 'usuario' and password == 'contraseña':
+        if verificar_usuario_db(user, password):
             ex = App()
             app.exec_()
         else:
