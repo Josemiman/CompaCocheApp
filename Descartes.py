@@ -1,3 +1,8 @@
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+
 def cargar_lista_db(campo):
     # Configura las credenciales de Firebase
     cred = credentials.Certificate('AccessKey.json')
