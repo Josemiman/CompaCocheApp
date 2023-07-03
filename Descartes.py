@@ -34,3 +34,21 @@ def cargar_lista_db(campo):
 #```
 
 #Para utilizar esta función, debes pasarle dos argumentos: el nombre de la colección a la que quieres añadir los datos y un diccionario con los datos que quieres añadir. Por ejemplo, si quisieras añadir un nuevo coche a la colección "CompaCoche", podrías hacerlo de la siguiente manera:
+
+# Función para agregar un nuevo campo. Por ejemplo, un nuevo usuario
+
+def agregar_datos_db(coleccion, id_documento, datos):
+    # Configura las credenciales de Firebase
+    cred = credentials.Certificate('AccessKey.json')
+    firebase_admin.initialize_app(cred)
+
+    # Accede a la base de datos de Firestore
+    db = firestore.client()
+
+    # Actualiza los datos en el documento especificado
+    db.collection(coleccion).document(id_documento).update(datos)
+
+    # Elimina la aplicación de Firebase
+    firebase_admin.delete_app(firebase_admin.get_app())
+
+    return "Datos añadidos correctamente"
