@@ -6,7 +6,6 @@ from AccionesDB import agregar_datos_db
 from AccionesDB import verificar_usuario_db
 from AccionesDB import verificar_nuevo_usuario
 
-
 from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QComboBox, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QMessageBox, QDialog
 
