@@ -1,8 +1,11 @@
 import AccionesDB
 from AccionesDB import modificar_dato_db
 from AccionesDB import cargar_lista_db
-from AccionesDB import verificar_usuario_db
 from AccionesDB import agregar_elemento_array
+from AccionesDB import agregar_datos_db
+from AccionesDB import verificar_usuario_db
+from AccionesDB import verificar_nuevo_usuario
+
 
 from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QComboBox, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QMessageBox, QDialog
@@ -109,19 +112,27 @@ class AltaUsuarioDialog(QDialog):
 
 class App(QWidget):
 
-    def __init__(self):
+    def __init__(self, user):
         super().__init__()
         self.title = 'CompaCocheOPPLUS'
         self.left = 30
         self.top = 30
         self.width = 640
         self.height = 480
-        self.initUI()
 
-    def initUI(self):
+
+        self.user = user
+
+        # Recuperar los datos del usuario de la base de datos
+        datos_usuario = cargar_lista_db('Usuarios', self.user)
+
+        self.initUI(datos_usuario)
+
+    def initUI(self, datos_usuario):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
+        datos_usuario[3]
         # Establecer el color de fondo
         palette = QPalette()
         palette.setColor(QPalette.Background, QColor(200, 255, 200))
@@ -156,6 +167,19 @@ class App(QWidget):
         parking_combobox.addItems(cargar_lista_db('FormData', 'Parking'))
         parking_combobox.setCurrentIndex(-1)
         parking_combobox.setEnabled(False)
+
+        if datos_usuario:
+            horario_combobox.setCurrentText(datos_usuario[1])
+            turno_combobox.setCurrentText(datos_usuario[2])
+            zona_combobox.setCurrentText(datos_usuario[3])
+            coche_combobox.setCurrentText(datos_usuario[4])
+            coche_combobox.setCurrentText(datos_usuario[5])
+            plazas_input.setText(datos_usuario[6])
+            parking_combobox.setCurrentText(datos_usuario[7])
+            if coche_combobox.currentText() == 'Sí':
+                plazas_input.setEnabled(True)
+            else:
+                plazas_input.setEnabled(False)
 
         add_button = QPushButton('Añadir/Modificar', self)
         search_button = QPushButton('Buscar', self)
@@ -197,8 +221,8 @@ class App(QWidget):
             'turno': turno_combobox.currentText(),
             'zona': zona_combobox.currentText(),
             'coche': coche_combobox.currentText(),
-            'plazas': plazas_input.text() if coche_combobox.currentText() == 'Sí' else None,
-            'parking': parking_combobox.currentText() if coche_combobox.currentText() == 'Sí' else None
+            'plazas': plazas_input.text() if coche_combobox.currentText() == 'Sí' else '',
+            'parking': parking_combobox.currentText() if coche_combobox.currentText() == 'Sí' else ''
         }))
         search_button.clicked.connect(lambda: self.search({
             'horario': horario_combobox.currentText(),
@@ -239,7 +263,8 @@ if __name__ == '__main__':
     if login_dialog.exec_() == QDialog.Accepted:
         user, password = login_dialog.get_user_password()
         if verificar_usuario_db(user, password):
-            ex = App()
+            ex = App(user)
+            ex.show()
             app.exec_()
         else:
             QMessageBox.warning(None, 'Advertencia', 'Usuario o contraseña incorrectos')

@@ -56,7 +56,6 @@ def cargar_lista_db(documento, campo):
         retorno.append(i)
 
     retorno.append('Otro')
-    print(retorno)
 
     # Elimina la aplicación de Firebase
     firebase_admin.delete_app(firebase_admin.get_app())
@@ -93,11 +92,29 @@ def agregar_elemento_array(coleccion, id_documento, campo, elemento):
 
 #agregar_elemento_array('CompaCoche', 'FormData', 'Zonas','Mordor Norte')
 
+def agregar_datos_db(coleccion, id_documento, datos):
+    # Configura las credenciales de Firebase
+    cred = credentials.Certificate('AccessKey.json')
+    firebase_admin.initialize_app(cred)
+
+    # Accede a la base de datos de Firestore
+    db = firestore.client()
+
+    # Actualiza los datos en el documento especificado
+    db.collection(coleccion).document(id_documento).update(datos)
+
+    # Elimina la aplicación de Firebase
+    firebase_admin.delete_app(firebase_admin.get_app())
+
+    return "Datos añadidos correctamente"
+
 
 def verificar_usuario_db(user, password):
     contra = cargar_lista_db('Usuarios', user)
-    print(contra)
     if contra[0] == password:
         return True
     else:
         return False
+
+def verificar_nuevo_usuario(user, password):
+    return False

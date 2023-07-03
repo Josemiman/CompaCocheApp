@@ -31,6 +31,7 @@ def cargar_lista_db(campo):
     firebase_admin.delete_app(firebase_admin.get_app())
 
     return retorno
-#```
+
+
 
 #Para utilizar esta función, debes pasarle dos argumentos: el nombre de la colección a la que quieres añadir los datos y un diccionario con los datos que quieres añadir. Por ejemplo, si quisieras añadir un nuevo coche a la colección "CompaCoche", podrías hacerlo de la siguiente manera:
