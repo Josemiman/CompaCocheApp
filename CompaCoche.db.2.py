@@ -153,7 +153,7 @@ class App(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        datos_usuario[3]
+        #datos_usuario[3]
         # Establecer el color de fondo
         palette = QPalette()
         palette.setColor(QPalette.Background, QColor(200, 255, 200))
@@ -257,20 +257,26 @@ class App(QWidget):
         self.show()
 
     def update_elements(self, text, plazas_input, parking_combobox):
+        try:
+            datos_usuario = cargar_lista_db('Usuarios', self.user)
+        except:
+        	datos_usuario = ['', '', '', '', '', '0', 'Ninguno']
         enabled = text == 'Sí'
         plazas_input.setEnabled(enabled)
         parking_combobox.setEnabled(enabled)
         if enabled == False:
             plazas_input.setText('')
             parking_combobox.setCurrentIndex(-1)
-
+        else:
+        	plazas_input.setText(datos_usuario[5])
+        	parking_combobox.setCurrentText(datos_usuario[6])
+        	
     def add_or_modify(self, data):
         if all(data.values()):
             # Lógica para añadir o modificar el registro con los datos
             data_old = cargar_lista_db('Usuarios', user)
             modificar_dato_db(
-                'Usuarios', [
-                    data['usuario'],
+                'Usuarios', data['usuario'], [
                     data_old[0],
                     data['horario'],
                     data['turno'],
