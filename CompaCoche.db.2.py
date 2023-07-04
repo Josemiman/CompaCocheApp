@@ -283,6 +283,7 @@ class App(QWidget):
                     data_old[9]
                 ]
             )
+
             QMessageBox.information(self, 'Información', 'Actualización realizada')
         else:
             QMessageBox.warning(self, 'Advertencia', 'Faltan campos por cumplimentar')

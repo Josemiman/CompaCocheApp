@@ -42,6 +42,7 @@ def cargar_lista_db(documento, campo):
     # Accede a la base de datos de Firestore
     db = firestore.client()
 
+
     # Obtiene una referencia al documento especificado
     ref = db.collection('CompaCoche').document(documento)
 
