@@ -32,6 +32,7 @@ def modificar_dato_db(id, campo, valor):
 
 #En esta función, debes pasar como parámetros el ID del documento que deseas modificar, el campo que deseas modificar y el nuevo valor que deseas asignar. Recuerda que debes tener los permisos necesarios para modificar datos en la base de datos..
 
+#modificar_dato_db('Usuarios', 'Mortadelo', ['pwd','caca'])
 
 def cargar_lista_db(documento, campo):
     # Configura las credenciales de Firebase
@@ -47,21 +48,26 @@ def cargar_lista_db(documento, campo):
     # Obtiene el documento especificado y lo convierte a un diccionario de Python
     doc = ref.get().to_dict()
 
-    # Obtiene el campo especificado del diccionario y lo convierte a una lista
-    elementos = doc[campo]
+    try:
+        # Obtiene el campo especificado del diccionario y lo convierte a una lista
+        elementos = doc[campo]
 
-    # Agrega los elementos a la lista de retorno
-    retorno = []
-    for i in elementos:
-        retorno.append(i)
+        # Agrega los elementos a la lista de retorno
+        retorno = []
+        for i in elementos:
+            retorno.append(i)
 
-    retorno.append('Otro')
+        retorno.append('Otro')
 
-    # Elimina la aplicación de Firebase
-    firebase_admin.delete_app(firebase_admin.get_app())
+        # Elimina la aplicación de Firebase
+        firebase_admin.delete_app(firebase_admin.get_app())
 
-    return retorno
-    
+        return retorno
+    except:
+        # Elimina la aplicación de Firebase
+        firebase_admin.delete_app(firebase_admin.get_app())
+
+        return ['None']
 
 #Aquí tienes una función modificada que te permitirá añadir un elemento a un campo de tipo array:
 
@@ -110,10 +116,16 @@ def agregar_datos_db(coleccion, id_documento, datos):
 
 
 def verificar_usuario_db(user, password):
-    contra = cargar_lista_db('Usuarios', user)
-    if contra[0] == password:
-        return True
-    else:
+    # Como el usuario lo guardo en la bbdd como un diccionario en el que la clave es el usuario y el valor una lista de datos
+    # #uso try para intentar recuperarlo
+    try:
+        contra = cargar_lista_db('Usuarios', user)
+        if contra[0] == password:
+            return True
+        else:
+            return False
+    # Si no existe la clave (usuario), devuelve KeyError y uso esa excepción para devolver False
+    except KeyError:
         return False
 
 def verificar_nuevo_usuario(user, password):

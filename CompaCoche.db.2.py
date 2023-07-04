@@ -60,22 +60,26 @@ class LoginDialog(QDialog):
             return user, password
         # Si no se encuentra el usuario o la contraseña, devolver None
         else:
+            QMessageBox.warning(self, 'Advertencia', 'Usuario o contraseña erróneo')
             return None, None
 
     def show_alta_usuario_dialog(self):
         dialog = AltaUsuarioDialog(self)
         if dialog.exec_() == QDialog.Accepted:
-            user, password = dialog.get_user_password()
-            if user and password:
+            user, password, nick, mail, tlfn = dialog.get_data()
+            if user and password and nick and mail and  tlfn:
+                agregar_datos_db('CompaCoche', 'Usuarios', {user:[password, '', '', '', '', '', '', nick, mail, tlfn]})
                 self.user_input.setText(user)
                 self.password_input.setText(password)
+            else:
+                QMessageBox.warning(self, 'Advertencia', 'Faltan campos por cumplimentar')
 
 class AltaUsuarioDialog(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle('Alta de usuario')
-        self.setGeometry(100, 100, 900, 900)
+        self.setGeometry(100, 100, 900, 700)
 
         self.user_label = QLabel('Usuario:', self)
         self.user_input = QLineEdit(self)
@@ -119,10 +123,13 @@ class AltaUsuarioDialog(QDialog):
         self.accept_button.clicked.connect(self.accept)
         self.cancel_button.clicked.connect(self.reject)
 
-    def get_user_password(self):
+    def get_data(self):
         user = self.user_input.text()
         password = self.password_input.text()
-        return user, password
+        nick = self.nick_input.text()
+        mail = self.mail_input.text()
+        tlfn = self.tlfn_input.text()
+        return user, password, nick, mail, tlfn
 
 class App(QWidget):
 
@@ -187,15 +194,14 @@ class App(QWidget):
             turno_combobox.setCurrentText(datos_usuario[2])
             zona_combobox.setCurrentText(datos_usuario[3])
             coche_combobox.setCurrentText(datos_usuario[4])
-            coche_combobox.setCurrentText(datos_usuario[5])
-            plazas_input.setText(datos_usuario[6])
-            parking_combobox.setCurrentText(datos_usuario[7])
+            plazas_input.setText(datos_usuario[5])
+            parking_combobox.setCurrentText(datos_usuario[6])
             if coche_combobox.currentText() == 'Sí':
                 plazas_input.setEnabled(True)
             else:
                 plazas_input.setEnabled(False)
 
-        add_button = QPushButton('Añadir/Modificar', self)
+        add_button = QPushButton('Actualizar datos', self)
         search_button = QPushButton('Buscar', self)
 
         # Establecer el color de los botones
@@ -231,20 +237,21 @@ class App(QWidget):
 
 
         add_button.clicked.connect(lambda: self.add_or_modify({
+            'usuario': user,
             'horario': horario_combobox.currentText(),
             'turno': turno_combobox.currentText(),
             'zona': zona_combobox.currentText(),
             'coche': coche_combobox.currentText(),
-            'plazas': plazas_input.text() if coche_combobox.currentText() == 'Sí' else '',
-            'parking': parking_combobox.currentText() if coche_combobox.currentText() == 'Sí' else ''
+            'plazas': plazas_input.text() if coche_combobox.currentText() == 'Sí' else '0',
+            'parking': parking_combobox.currentText() if coche_combobox.currentText() == 'Sí' else 'Ninguno'
         }))
         search_button.clicked.connect(lambda: self.search({
             'horario': horario_combobox.currentText(),
             'turno': turno_combobox.currentText(),
             'zona': zona_combobox.currentText(),
             'coche': coche_combobox.currentText(),
-            'plazas': plazas_input.text() if coche_combobox.currentText() == 'Sí' else None,
-            'parking': parking_combobox.currentText() if coche_combobox.currentText() == 'Sí' else None
+            'plazas': plazas_input.text() if coche_combobox.currentText() == 'Sí' else '0',
+            'parking': parking_combobox.currentText() if coche_combobox.currentText() == 'Sí' else 'Ninguno'
         }))
 
         self.show()
@@ -260,7 +267,23 @@ class App(QWidget):
     def add_or_modify(self, data):
         if all(data.values()):
             # Lógica para añadir o modificar el registro con los datos
-            QMessageBox.information(self, 'Información', 'Registro añadido/modificado correctamente')
+            data_old = cargar_lista_db('Usuarios', user)
+            modificar_dato_db(
+                'Usuarios', [
+                    data['usuario'],
+                    data_old[0],
+                    data['horario'],
+                    data['turno'],
+                    data['zona'],
+                    data['coche'],
+                    data['plazas'],
+                    data['parking'],
+                    data_old[7],
+                    data_old[8],
+                    data_old[9]
+                ]
+            )
+            QMessageBox.information(self, 'Información', 'Actualización realizada')
         else:
             QMessageBox.warning(self, 'Advertencia', 'Faltan campos por cumplimentar')
 
