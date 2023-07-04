@@ -75,7 +75,7 @@ class AltaUsuarioDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle('Alta de usuario')
-        self.setGeometry(100, 100, 300, 150)
+        self.setGeometry(100, 100, 900, 900)
 
         self.user_label = QLabel('Usuario:', self)
         self.user_input = QLineEdit(self)
@@ -83,6 +83,15 @@ class AltaUsuarioDialog(QDialog):
         self.password_label = QLabel('Contraseña:', self)
         self.password_input = QLineEdit(self)
         self.password_input.setEchoMode(QLineEdit.Password)
+
+        self.nick_label = QLabel('Nick:', self)
+        self.nick_input = QLineEdit(self)
+
+        self.mail_label = QLabel('E-Mail:', self)
+        self.mail_input = QLineEdit(self)
+
+        self.tlfn_label = QLabel('Teléfono:', self)
+        self.tlfn_input = QLineEdit(self)
 
         self.accept_button = QPushButton('Aceptar', self)
         self.cancel_button = QPushButton('Cancelar', self)
@@ -92,6 +101,12 @@ class AltaUsuarioDialog(QDialog):
         vbox.addWidget(self.user_input)
         vbox.addWidget(self.password_label)
         vbox.addWidget(self.password_input)
+        vbox.addWidget(self.nick_label)
+        vbox.addWidget(self.nick_input)
+        vbox.addWidget(self.mail_label)
+        vbox.addWidget(self.mail_input)
+        vbox.addWidget(self.tlfn_label)
+        vbox.addWidget(self.tlfn_input)
 
         hbox = QHBoxLayout()
         hbox.addWidget(self.accept_button)
